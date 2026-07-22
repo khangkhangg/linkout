@@ -62,6 +62,26 @@ route('POST', '/login', function () {
 });
 route('GET', '/logout', function () { session_destroy(); redirect('/'); });
 
+route('GET', '/reset', fn() => view('auth/reset_request', ['title' => 'Reset password']));
+route('POST', '/reset', function () {
+    $token = reset_start(db(), $_POST['email'] ?? '');
+    if ($token) {
+        send_mail(strtolower(trim($_POST['email'])), t('mail_reset_subject'),
+            t('mail_reset_body') . "\n\n" . config('base_url') . '/reset/' . $token);
+    }
+    return view('auth/reset_request', ['title' => 'Reset password',
+        'notice' => t('notice_reset_sent')]);   // same notice either way — no account probing
+});
+route('GET', '/reset/{token}', fn($p) =>
+    view('auth/reset_form', ['title' => 'Reset password', 'token' => $p['token']]));
+route('POST', '/reset/{token}', function ($p) {
+    if (!reset_finish(db(), $p['token'], $_POST['password'] ?? '')) {
+        return view('auth/reset_form', ['title' => 'Reset password', 'token' => $p['token'],
+            'error' => t('err_reset_invalid')]);
+    }
+    return view('auth/login', ['title' => 'Log in', 'notice' => t('notice_password_updated')]);
+});
+
 route('GET', '/post', function () {
     require_verified_user();
     return view('post', ['title' => 'Share your story', 'editing' => false, 'story' => null]);

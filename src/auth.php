@@ -73,3 +73,25 @@ function require_admin(): array
     if (!$u || $u['role'] !== 'admin') { http_response_code(404); echo '404'; exit; }
     return $u;
 }
+
+function reset_start(PDO $pdo, string $email): ?string
+{
+    $st = $pdo->prepare('SELECT id FROM users WHERE email = ? AND banned_at IS NULL');
+    $st->execute([strtolower(trim($email))]);
+    if (!$st->fetch()) return null;
+    $token = bin2hex(random_bytes(32));
+    $pdo->prepare('UPDATE users SET reset_token = ?,
+        reset_expires_at = NOW() + INTERVAL 1 HOUR WHERE email = ?')
+        ->execute([$token, strtolower(trim($email))]);
+    return $token;
+}
+
+function reset_finish(PDO $pdo, string $token, string $newPassword): bool
+{
+    if (strlen($newPassword) < 8 || $token === '') return false;
+    $st = $pdo->prepare('UPDATE users SET password_hash = ?, reset_token = NULL,
+        reset_expires_at = NULL
+        WHERE reset_token = ? AND reset_expires_at > NOW()');
+    $st->execute([password_hash($newPassword, PASSWORD_BCRYPT), $token]);
+    return $st->rowCount() === 1;
+}
