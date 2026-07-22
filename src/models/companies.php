@@ -10,8 +10,18 @@ function company_find_or_create(PDO $pdo, string $name, string $domainInput, int
     $existing = company_by_domain($pdo, $domain);
     if ($existing) return ['ok' => true, 'company' => $existing];
 
-    $pdo->prepare('INSERT INTO companies (domain, name, created_by) VALUES (?,?,?)')
-        ->execute([$domain, $name, $userId]);
+    try {
+        $pdo->prepare('INSERT INTO companies (domain, name, created_by) VALUES (?,?,?)')
+            ->execute([$domain, $name, $userId]);
+    } catch (PDOException $e) {
+        if ($e->errorInfo[1] ?? null) {
+            if ((int)($e->errorInfo[1]) === 1062) {
+                $existing = company_by_domain($pdo, $domain);
+                if ($existing) return ['ok' => true, 'company' => $existing];
+            }
+        }
+        throw $e;
+    }
     return ['ok' => true, 'company' => company_by_domain($pdo, $domain)];
 }
 
