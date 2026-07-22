@@ -43,13 +43,14 @@ function attempt_login(PDO $pdo, string $email, string $password): ?array
 function current_user(): ?array
 {
     if (empty($_SESSION['uid'])) return null;
-    static $u = false;
-    if ($u === false) {
+    static $cacheUid = null, $cacheUser = null;
+    if ($cacheUid !== (int)$_SESSION['uid']) {
         $st = db()->prepare('SELECT * FROM users WHERE id = ? AND banned_at IS NULL');
         $st->execute([$_SESSION['uid']]);
-        $u = $st->fetch() ?: null;
+        $cacheUser = $st->fetch() ?: null;
+        $cacheUid = (int)$_SESSION['uid'];
     }
-    return $u;
+    return $cacheUser;
 }
 
 function require_verified_user(): array
