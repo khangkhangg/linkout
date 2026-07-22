@@ -100,6 +100,8 @@ route('GET', '/post', function () {
 });
 route('POST', '/post', function () {
     $u = require_verified_user();
+    if (empty($_POST['attest'])) return view('post', ['title' => 'Share your story',
+        'editing' => false, 'story' => null, 'error' => t('err_attest_required')]);
     $c = company_find_or_create(db(), $_POST['company_name'] ?? '',
         $_POST['company_domain'] ?? '', $u['id']);
     if (!$c['ok']) return view('post', ['title' => 'Share your story', 'editing' => false,
@@ -141,8 +143,12 @@ route('GET', '/story/{id}', function ($p) {
         $st->execute([$u['id'], $s['id']]);
         $mv = (int)($st->fetchColumn() ?: 0);
     }
+    $similar = $s['status'] === 'active'
+        ? similar_stories(db(), (int)$s['company_id'], (int)$s['id']) : [];
     return view('story', ['title' => $s['title'], 'story' => $s, 'my_vote' => $mv,
-        'comments' => $s['status'] === 'active' ? comments_for_story(db(), $s['id']) : []]);
+        'comments' => $s['status'] === 'active' ? comments_for_story(db(), $s['id']) : [],
+        'similar' => $similar,
+        'trending' => $s['status'] === 'active' ? rail_trending(db()) : []]);
 });
 route('POST', '/story/{id}/comment', function ($p) {
     $u = require_verified_user();

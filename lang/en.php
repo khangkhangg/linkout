@@ -91,4 +91,11 @@ return [
     'mail_reset_body' => 'Use this link to set a new password (valid 1 hour):',
     'mail_report_code_subject' => 'LinkOut report verification code',
     'mail_report_code_body' => 'Your verification code is:',
+    // user menu + story side + post attestation
+    'user_menu_member' => 'Member',
+    'overall_rating' => 'Overall',
+    'more_from_company' => 'More from this company',
+    'view_company' => 'View company',
+    'post_attest' => 'I confirm I worked at this company and this story is based on my own experience.',
+    'err_attest_required' => 'Please confirm you worked at this company before posting.',
 ];

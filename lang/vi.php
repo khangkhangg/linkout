@@ -78,4 +78,11 @@ return [
     'mail_reset_body' => 'Dùng liên kết này để đặt mật khẩu mới (hiệu lực 1 giờ):',
     'mail_report_code_subject' => 'Mã xác minh báo cáo LinkOut',
     'mail_report_code_body' => 'Mã xác minh của bạn là:',
+    // user menu + story side + post attestation
+    'user_menu_member' => 'Thành viên',
+    'overall_rating' => 'Tổng thể',
+    'more_from_company' => 'Thêm về công ty này',
+    'view_company' => 'Xem công ty',
+    'post_attest' => 'Tôi xác nhận đã từng làm việc tại công ty này và câu chuyện dựa trên trải nghiệm của chính tôi.',
+    'err_attest_required' => 'Vui lòng xác nhận bạn đã từng làm việc tại công ty này trước khi đăng.',
 ];

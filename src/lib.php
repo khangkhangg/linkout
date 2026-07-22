@@ -57,3 +57,15 @@ function time_ago(string $datetime): string
     if ($d < 2592000) return floor($d / 86400) . 'd ago';
     return date('M Y', strtotime($datetime));
 }
+
+// Deterministic muted-tint background for a handle's avatar. Warm, on-brand
+// palette so avatars read as a set rather than a rainbow.
+const AVATAR_COLORS = [
+    '#f73b20', '#f84d35', '#fb2d54', '#e8863a', '#d9772e',
+    '#c0603b', '#b8506a', '#a8574f', '#cf6a4c', '#e0654e',
+];
+
+function avatar_color(string $handle): string
+{
+    return AVATAR_COLORS[crc32($handle) % count(AVATAR_COLORS)];
+}

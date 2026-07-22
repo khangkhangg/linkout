@@ -37,6 +37,13 @@
              <?= ($editing ? $story['recommend'] : ($_POST['recommend'] ?? 0)) ? 'checked' : '' ?>>
       <?= e(t('post_recommend')) ?>
     </label>
+    <?php if (!$editing): ?>
+    <label class="attest-row">
+      <input type="checkbox" name="attest" value="1" required
+             <?= !empty($_POST['attest']) ? 'checked' : '' ?>>
+      <?= e(t('post_attest')) ?>
+    </label>
+    <?php endif; ?>
     <button class="btn-primary" type="submit"><?= e($editing ? t('post_save') : t('post_publish')) ?></button>
   </form>
 </section>

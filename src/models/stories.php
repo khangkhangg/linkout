@@ -121,6 +121,19 @@ function rail_trending(PDO $pdo, int $n = 5): array
         LIMIT $n")->fetchAll();
 }
 
+function similar_stories(PDO $pdo, int $companyId, int $excludeStoryId, int $n = 4): array
+{
+    // Other active stories about the same company, newest first.
+    $st = $pdo->prepare("SELECT s.id, s.title, s.vote_score, u.handle, s.created_at
+        FROM stories s
+        JOIN users u ON u.id = s.user_id
+        WHERE s.company_id = :cid AND s.id <> :sid AND s.status = 'active'
+        ORDER BY s.created_at DESC
+        LIMIT $n");
+    $st->execute(['cid' => $companyId, 'sid' => $excludeStoryId]);
+    return $st->fetchAll();
+}
+
 function rail_most_liked(PDO $pdo, int $n = 5): array
 {
     return $pdo->query("SELECT s.id, s.title, s.vote_score
