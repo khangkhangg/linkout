@@ -66,3 +66,10 @@ function require_verified_user_json(): array
     if (!$u || !$u['email_verified_at']) json_out(['ok' => false, 'error' => t('err_login_required')], 401);
     return $u;
 }
+
+function require_admin(): array
+{
+    $u = current_user();
+    if (!$u || $u['role'] !== 'admin') { http_response_code(404); echo '404'; exit; }
+    return $u;
+}

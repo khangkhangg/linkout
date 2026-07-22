@@ -141,6 +141,48 @@ route('GET', '/search', function () {
         'stories' => story_search(db(), $q)]);
 });
 
+route('GET', '/admin', function () {
+    require_admin();
+    return view('admin/queue', ['title' => 'Admin', 'queue' => admin_queue(db())]);
+});
+route('POST', '/admin/action', function () {
+    require_admin();
+    $sid = (int)($_POST['story_id'] ?? 0);
+    match ($_POST['do'] ?? '') {
+        'restore' => admin_restore_story(db(), $sid),
+        'remove'  => admin_remove_story(db(), $sid),
+        'dismiss' => admin_dismiss_report(db(), (int)($_POST['report_id'] ?? 0)),
+        default   => null,
+    };
+    redirect('/admin');
+});
+route('GET', '/admin/users', function () {
+    require_admin();
+    return view('admin/users', ['title' => 'Users',
+        'users' => db()->query('SELECT * FROM users ORDER BY id DESC LIMIT 200')->fetchAll()]);
+});
+route('POST', '/admin/ban', function () {
+    require_admin();
+    admin_set_ban(db(), (int)($_POST['user_id'] ?? 0), !empty($_POST['banned']));
+    redirect('/admin/users');
+});
+route('GET', '/admin/companies', function () {
+    require_admin();
+    return view('admin/companies', ['title' => 'Companies',
+        'companies' => db()->query('SELECT * FROM companies ORDER BY name LIMIT 500')->fetchAll()]);
+});
+route('POST', '/admin/company', function () {
+    require_admin();
+    $cid = (int)($_POST['company_id'] ?? 0);
+    if (($_POST['do'] ?? '') === 'rename') {
+        company_rename(db(), $cid, $_POST['name'] ?? '');
+    } elseif (($_POST['do'] ?? '') === 'merge') {
+        $into = company_by_domain(db(), normalize_domain($_POST['merge_into_domain'] ?? '') ?? '');
+        if ($into) company_merge(db(), $cid, (int)$into['id']);
+    }
+    redirect('/admin/companies');
+});
+
 $out = dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 if ($out === null) { http_response_code(404); echo '404'; exit; }
 echo $out;

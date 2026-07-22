@@ -93,3 +93,48 @@ function verify_report(PDO $pdo, int $reportId, int $userId, string $code): arra
         throw $t;
     }
 }
+
+function admin_queue(PDO $pdo): array
+{
+    return $pdo->query("SELECT r.*, s.title AS story_title, s.status AS story_status,
+            u.handle AS reporter_handle
+        FROM reports r
+        JOIN stories s ON s.id = r.story_id
+        JOIN users u ON u.id = r.reporter_user_id
+        WHERE r.status = 'pending' AND r.verified_at IS NOT NULL
+        ORDER BY r.is_company_match DESC, r.created_at ASC")->fetchAll();
+}
+
+function admin_restore_story(PDO $pdo, int $storyId): void
+{
+    $pdo->beginTransaction();
+    try {
+        $pdo->prepare("UPDATE stories SET status = 'active'
+            WHERE id = ? AND status = 'auto_hidden'")->execute([$storyId]);
+        $pdo->prepare("UPDATE reports SET status = 'dismissed'
+            WHERE story_id = ? AND status = 'pending'")->execute([$storyId]);
+        $pdo->commit();
+    } catch (Throwable $t) { $pdo->rollBack(); throw $t; }
+}
+
+function admin_remove_story(PDO $pdo, int $storyId): void
+{
+    $pdo->beginTransaction();
+    try {
+        $pdo->prepare("UPDATE stories SET status = 'removed' WHERE id = ?")->execute([$storyId]);
+        $pdo->prepare("UPDATE reports SET status = 'actioned'
+            WHERE story_id = ? AND status = 'pending'")->execute([$storyId]);
+        $pdo->commit();
+    } catch (Throwable $t) { $pdo->rollBack(); throw $t; }
+}
+
+function admin_dismiss_report(PDO $pdo, int $reportId): void
+{
+    $pdo->prepare("UPDATE reports SET status = 'dismissed' WHERE id = ?")->execute([$reportId]);
+}
+
+function admin_set_ban(PDO $pdo, int $userId, bool $banned): void
+{
+    $pdo->prepare('UPDATE users SET banned_at = ' . ($banned ? 'NOW()' : 'NULL') .
+        " WHERE id = ? AND role <> 'admin'")->execute([$userId]);
+}

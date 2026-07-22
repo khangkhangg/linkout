@@ -82,3 +82,22 @@ function rail_top_companies(PDO $pdo, int $n = 5): array
         ORDER BY bayes_score DESC
         LIMIT $n")->fetchAll();
 }
+
+function company_rename(PDO $pdo, int $companyId, string $newName): void
+{
+    $newName = trim($newName);
+    if ($newName === '' || mb_strlen($newName) > 190) return;
+    $pdo->prepare('UPDATE companies SET name = ? WHERE id = ?')->execute([$newName, $companyId]);
+}
+
+function company_merge(PDO $pdo, int $fromId, int $intoId): void
+{
+    if ($fromId === $intoId) return;
+    $pdo->beginTransaction();
+    try {
+        $pdo->prepare('UPDATE stories SET company_id = ? WHERE company_id = ?')
+            ->execute([$intoId, $fromId]);
+        $pdo->prepare('DELETE FROM companies WHERE id = ?')->execute([$fromId]);
+        $pdo->commit();
+    } catch (Throwable $t) { $pdo->rollBack(); throw $t; }
+}
