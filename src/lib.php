@@ -1,1 +1,42 @@
 <?php
+
+function normalize_domain(string $input): ?string
+{
+    $d = strtolower(trim($input));
+    $d = preg_replace('#^[a-z]+://#', '', $d);      // scheme
+    $d = preg_replace('#[/?\#].*$#', '', $d);        // path/query/fragment
+    $d = preg_replace('/^www\./', '', $d);
+    if ($d === '' || !str_contains($d, '.')) return null;
+    if (!preg_match('/^(?!-)[a-z0-9-]{1,63}(?<!-)(\.(?!-)[a-z0-9-]{1,63}(?<!-))+$/', $d)) return null;
+    return $d;
+}
+
+const FREEMAIL_DOMAINS = [
+    'gmail.com','googlemail.com','yahoo.com','yahoo.com.vn','outlook.com',
+    'hotmail.com','live.com','msn.com','icloud.com','me.com','proton.me',
+    'protonmail.com','zoho.com','aol.com','mail.com','gmx.com','gmx.net',
+    'yandex.com','yandex.ru','qq.com','163.com','126.com','tutanota.com',
+    'fastmail.com','hey.com','pm.me',
+];
+
+function is_freemail(string $domain): bool
+{
+    return in_array(strtolower($domain), FREEMAIL_DOMAINS, true);
+}
+
+const HANDLE_ADJ = ['Quiet','Brave','Sly','Calm','Swift','Bold','Wry','Keen',
+    'Lone','Free','Wild','Deft','True','Warm','Cool','Sharp','Plain','Late'];
+const HANDLE_NOUN = ['Falcon','Otter','Lynx','Heron','Badger','Fox','Crane',
+    'Wolf','Raven','Tiger','Sparrow','Moose','Gecko','Panda','Orca','Bison'];
+
+function generate_handle(): string
+{
+    return HANDLE_ADJ[random_int(0, count(HANDLE_ADJ) - 1)]
+         . HANDLE_NOUN[random_int(0, count(HANDLE_NOUN) - 1)]
+         . random_int(1, 999);
+}
+
+function random_code(): string
+{
+    return str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+}
