@@ -2,6 +2,8 @@
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/router.php';
 require __DIR__ . '/../src/lib.php';
+require __DIR__ . '/../src/auth.php';
+require __DIR__ . '/../src/ratelimit.php';
 
 function test_db(): PDO
 {

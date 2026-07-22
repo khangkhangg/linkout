@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . '/router.php';
 require __DIR__ . '/lib.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/mailer.php';
+require __DIR__ . '/ratelimit.php';
 
 function config(string $key)
 {
@@ -45,3 +48,5 @@ function view(string $template, array $data = []): string
 session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax',
     'secure' => config('env') === 'prod']);
 session_start();
+
+if (!function_exists('t')) { function t(string $k): string { return $k; } }
