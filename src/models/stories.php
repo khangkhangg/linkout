@@ -4,8 +4,8 @@ const RATING_KEYS = ['r_leadership','r_culture','r_benefits','r_balance','r_grow
 
 function story_validate(array $in): ?string
 {
-    $title = trim($in['title'] ?? '');
-    $body  = trim($in['body'] ?? '');
+    $title = is_string($in['title'] ?? null) ? trim($in['title']) : '';
+    $body  = is_string($in['body'] ?? null) ? trim($in['body']) : '';
     if ($title === '' || mb_strlen($title) > 200) return 'bad_title';
     if ($body === '' || mb_strlen($body) > 10000) return 'bad_body';
     foreach (RATING_KEYS as $k) {

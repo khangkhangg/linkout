@@ -43,6 +43,10 @@ final class StoriesTest extends TestCase
             $this->input(['title' => '']))['ok']);
         $this->assertFalse(story_create($this->pdo, $this->uid, $this->cid,
             $this->input(['body' => str_repeat('x', 10001)]))['ok']);
+        $this->assertFalse(story_create($this->pdo, $this->uid, $this->cid,
+            $this->input(['title' => ['x']]))['ok'], 'array title rejected, not fatal');
+        $this->assertFalse(story_create($this->pdo, $this->uid, $this->cid,
+            $this->input(['body' => ['x']]))['ok'], 'array body rejected, not fatal');
     }
 
     public function test_rate_limit_three_per_day(): void

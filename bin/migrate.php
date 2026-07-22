@@ -10,6 +10,7 @@ $pdo = new PDO(
     config('db_user'), config('db_pass'),
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 );
+$pdo->exec("SET time_zone = '+00:00'");
 $pdo->exec('CREATE TABLE IF NOT EXISTS migrations (
     name VARCHAR(190) PRIMARY KEY, applied_at DATETIME DEFAULT CURRENT_TIMESTAMP)');
 $done = $pdo->query('SELECT name FROM migrations')->fetchAll(PDO::FETCH_COLUMN);

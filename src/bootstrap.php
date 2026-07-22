@@ -21,6 +21,7 @@ function db(): PDO
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
+    $pdo->exec("SET time_zone = '+00:00'");
     return $pdo;
 }
 
@@ -47,7 +48,7 @@ function view(string $template, array $data = []): string
     return ob_get_clean();
 }
 
-date_default_timezone_set('Asia/Bangkok');
+date_default_timezone_set('UTC');
 
 session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax',
     'secure' => config('env') === 'prod']);

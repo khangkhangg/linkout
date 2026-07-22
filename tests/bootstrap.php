@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('Asia/Bangkok');
+date_default_timezone_set('UTC');
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/router.php';
 require __DIR__ . '/../src/lib.php';
@@ -15,6 +15,7 @@ function test_db(): PDO
         $pdo = new PDO('mysql:host=127.0.0.1;dbname=linkout_test;charset=utf8mb4',
             'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
+        $pdo->exec("SET time_zone = '+00:00'");
         // fresh schema every run
         $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
