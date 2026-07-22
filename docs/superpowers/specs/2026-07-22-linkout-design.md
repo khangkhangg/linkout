@@ -31,9 +31,10 @@ reports from the discussed company's own domain carry extra weight.
 - Plain PHP, front controller `public/index.php` with a small router. No
   framework. PHP partial templates. PDO → MariaDB database `linkout`.
 - PHP sessions, secure/httponly/samesite cookies.
-- Email (confirmation links, reset links, report codes) via the server's local
-  mail setup; if none exists, msmtp relay (provider TBD at deploy time — this
-  is the one open infra question).
+- Email (confirmation links, reset links, report codes) via the server's
+  existing local mail setup if one works; otherwise msmtp relaying through
+  whatever SMTP account already sends mail for didudi.com. Verified at deploy
+  step 5; the app talks to one `send_mail()` helper either way.
 - Deploy: rsync from Mac, numbered `.sql` migration files, no CI.
 - Local repo: `~/Development/Projects/linkout` (this repo).
 
