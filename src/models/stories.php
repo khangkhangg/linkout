@@ -129,3 +129,36 @@ function rail_most_liked(PDO $pdo, int $n = 5): array
         ORDER BY s.vote_score DESC, s.created_at DESC
         LIMIT $n")->fetchAll();
 }
+
+function story_search(PDO $pdo, string $q, int $limit = 20): array
+{
+    $q = trim($q);
+    if ($q === '') return [];
+    $st = $pdo->prepare("SELECT s.*, c.domain, c.name AS company_name, u.handle,
+            (SELECT COUNT(*) FROM comments cm
+             WHERE cm.story_id = s.id AND cm.status = 'active') AS comment_count
+        FROM stories s
+        JOIN companies c ON c.id = s.company_id
+        JOIN users u ON u.id = s.user_id
+        WHERE s.status = 'active'
+          AND MATCH(s.title, s.body) AGAINST (? IN NATURAL LANGUAGE MODE)
+        LIMIT " . (int)$limit);
+    $st->execute([$q]);
+    return $st->fetchAll();
+}
+
+function stories_for_company(PDO $pdo, int $companyId, ?int $viewerId = null): array
+{
+    $st = $pdo->prepare("SELECT s.*, c.domain, c.name AS company_name, u.handle,
+            (SELECT COUNT(*) FROM comments cm
+             WHERE cm.story_id = s.id AND cm.status = 'active') AS comment_count,
+            COALESCE(v.value, 0) AS my_vote
+        FROM stories s
+        JOIN companies c ON c.id = s.company_id
+        JOIN users u ON u.id = s.user_id
+        LEFT JOIN votes v ON v.story_id = s.id AND v.user_id = :viewer
+        WHERE s.company_id = :cid AND s.status = 'active'
+        ORDER BY s.created_at DESC");
+    $st->execute(['cid' => $companyId, 'viewer' => $viewerId ?? 0]);
+    return $st->fetchAll();
+}

@@ -108,6 +108,21 @@ route('POST', '/comment/{id}/delete', function ($p) {
     redirect($sid ? "/story/$sid#comments" : '/');
 });
 
+route('GET', '/company/{domain}', function ($p) {
+    $c = company_by_domain(db(), strtolower($p['domain']));
+    if (!$c) { http_response_code(404); return '404'; }
+    $viewer = current_user();
+    return view('company', ['title' => $c['name'], 'company' => $c,
+        'agg' => company_aggregates(db(), $c['id']),
+        'stories' => stories_for_company(db(), $c['id'], $viewer['id'] ?? null)]);
+});
+route('GET', '/search', function () {
+    $q = trim($_GET['q'] ?? '');
+    return view('search', ['title' => 'Search', 'q' => $q,
+        'companies' => company_search(db(), $q),
+        'stories' => story_search(db(), $q)]);
+});
+
 $out = dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 if ($out === null) { http_response_code(404); echo '404'; exit; }
 echo $out;
