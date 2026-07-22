@@ -1,6 +1,6 @@
-<?php $dims = ['avg_leadership' => 'Leadership', 'avg_culture' => 'Work culture',
-    'avg_benefits' => 'Comp & benefits', 'avg_balance' => 'Work-life balance',
-    'avg_growth' => 'Career growth', 'avg_exit' => 'Exit experience']; ?>
+<?php $dims = ['avg_leadership' => t('r_leadership'), 'avg_culture' => t('r_culture'),
+    'avg_benefits' => t('r_benefits'), 'avg_balance' => t('r_balance'),
+    'avg_growth' => t('r_growth'), 'avg_exit' => t('r_exit')]; ?>
 <header class="company-head">
   <h1 class="h-heading-lg"><?= e($company['name']) ?></h1>
   <p class="muted"><?= e($company['domain']) ?></p>
@@ -29,12 +29,12 @@
     <div class="story-body">
       <div class="story-meta">
         <span class="rating-badge">&#9733; <?= $avg ?></span>
-        <?php if ((int)$s['recommend']): ?><span class="rec-badge">Recommends</span><?php endif; ?>
+        <?php if ((int)$s['recommend']): ?><span class="rec-badge"><?= e(t('recommends')) ?></span><?php endif; ?>
       </div>
       <h2 class="story-title"><a href="/story/<?= (int)$s['id'] ?>"><?= e($s['title']) ?></a></h2>
       <p class="story-excerpt"><?= e(mb_substr($s['body'], 0, 220)) ?></p>
       <p class="muted"><?= e($s['handle']) ?> · <?= e(time_ago($s['created_at'])) ?> ·
-        <?= (int)$s['vote_score'] ?> points · <?= (int)$s['comment_count'] ?> comments</p>
+        <?= (int)$s['vote_score'] ?> points · <?= (int)$s['comment_count'] ?> <?= e(t('comments')) ?></p>
     </div>
   </article>
   <?php endforeach; ?>

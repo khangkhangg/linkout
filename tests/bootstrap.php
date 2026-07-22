@@ -3,6 +3,7 @@ date_default_timezone_set('UTC');
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/router.php';
 require __DIR__ . '/../src/lib.php';
+require __DIR__ . '/../src/i18n.php';
 require __DIR__ . '/../src/auth.php';
 require __DIR__ . '/../src/ratelimit.php';
 require __DIR__ . '/../src/models/companies.php';

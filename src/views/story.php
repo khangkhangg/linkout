@@ -1,10 +1,8 @@
 <?php $u = current_user();
-$labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
-    'r_benefits' => 'Comp & benefits', 'r_balance' => 'Work-life balance',
-    'r_growth' => 'Career growth', 'r_exit' => 'Exit experience']; ?>
+$labels = array_combine(RATING_KEYS, array_map('t', RATING_KEYS)); ?>
 <article class="card story-full" id="story-<?= (int)$story['id'] ?>">
   <?php if ($story['status'] !== 'active'): ?>
-    <p class="review-banner">This story is under review.</p>
+    <p class="review-banner"><?= e(t('under_review')) ?></p>
   <?php else: ?>
   <div class="story-head">
     <div class="vote-col" data-story="<?= (int)$story['id'] ?>">
@@ -18,7 +16,7 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
       <a class="company-chip" href="/company/<?= e($story['domain']) ?>"><?= e($story['company_name']) ?></a>
       <h1 class="h-heading"><?= e($story['title']) ?></h1>
       <p class="muted"><?= e($story['handle']) ?> · <?= e(time_ago($story['created_at'])) ?>
-        <?php if ((int)$story['recommend']): ?> · <span class="rec-badge">Recommends</span><?php endif; ?></p>
+        <?php if ((int)$story['recommend']): ?> · <span class="rec-badge"><?= e(t('recommends')) ?></span><?php endif; ?></p>
     </div>
   </div>
   <div class="rating-summary">
@@ -33,14 +31,14 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
   <div class="story-text"><?= nl2br(e($story['body'])) ?></div>
   <div class="story-actions">
     <?php if (story_editable_by($story, $u)): ?>
-      <a class="link" href="/story/<?= (int)$story['id'] ?>/edit">Edit</a>
+      <a class="link" href="/story/<?= (int)$story['id'] ?>/edit"><?= e(t('edit')) ?></a>
       <form method="post" action="/story/<?= (int)$story['id'] ?>/delete" class="inline-form"
-            onsubmit="return confirm('Delete this story?')">
-        <button class="link-btn" type="submit">Delete</button>
+            onsubmit="return confirm('<?= e(t('delete_confirm')) ?>')">
+        <button class="link-btn" type="submit"><?= e(t('delete')) ?></button>
       </form>
     <?php endif; ?>
     <?php if ($u && $u['email_verified_at'] && (int)$story['user_id'] !== (int)$u['id']): ?>
-      <button class="link-btn" id="report-open" data-story="<?= (int)$story['id'] ?>">Report</button>
+      <button class="link-btn" id="report-open" data-story="<?= (int)$story['id'] ?>"><?= e(t('report')) ?></button>
     <?php endif; ?>
   </div>
   <?php endif; ?>
@@ -48,7 +46,7 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
 
 <?php if ($story['status'] === 'active'): ?>
 <section id="comments" class="comments">
-  <h2 class="h-subheading"><?= count($comments) ?> comments</h2>
+  <h2 class="h-subheading"><?= count($comments) ?> <?= e(t('comments')) ?></h2>
   <?php foreach ($comments as $c): ?>
   <div class="card comment">
     <p class="muted"><?= e($c['handle']) ?> · <?= e(time_ago($c['created_at'])) ?></p>
@@ -64,40 +62,39 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
   <?php if ($u && $u['email_verified_at'] && $story['status'] === 'active'): ?>
   <form method="post" action="/story/<?= (int)$story['id'] ?>/comment" class="comment-form">
     <textarea class="input" name="body" rows="3" maxlength="2000" required
-              placeholder="Add a comment"></textarea>
-    <button class="btn-primary" type="submit">Comment</button>
+              placeholder="<?= e(t('comment_placeholder')) ?>"></textarea>
+    <button class="btn-primary" type="submit"><?= e(t('comment_submit')) ?></button>
   </form>
   <?php elseif (!$u): ?>
-  <p class="muted"><a class="link" href="/login">Log in</a> to comment.</p>
+  <p class="muted"><a class="link" href="/login"><?= e(t('comment_login')) ?></a></p>
   <?php endif; ?>
 </section>
 <?php endif; ?>
 
 <div class="modal-backdrop" id="report-modal" hidden>
   <div class="modal glass-card">
-    <h3 class="h-subheading">Report this story</h3>
+    <h3 class="h-subheading"><?= e(t('report_title')) ?></h3>
     <div data-step="1">
       <select class="input" id="report-reason">
-        <option value="false_info">False information</option>
-        <option value="doxxing">Doxxing / names a private individual</option>
-        <option value="harassment">Hate or harassment</option>
-        <option value="spam">Spam</option>
-        <option value="other">Other</option>
+        <option value="false_info"><?= e(t('report_reason_false_info')) ?></option>
+        <option value="doxxing"><?= e(t('report_reason_doxxing')) ?></option>
+        <option value="harassment"><?= e(t('report_reason_harassment')) ?></option>
+        <option value="spam"><?= e(t('report_reason_spam')) ?></option>
+        <option value="other"><?= e(t('report_reason_other')) ?></option>
       </select>
-      <textarea class="input" id="report-text" rows="2" placeholder="Details (optional)"></textarea>
+      <textarea class="input" id="report-text" rows="2" placeholder="<?= e(t('report_details')) ?>"></textarea>
       <input class="input" id="report-email" type="email"
-             placeholder="Your corporate email (no gmail/yahoo)">
-      <p class="muted">We send a 6-digit code to prove the mailbox is real.
-         The email is stored for moderation only and never shown publicly.</p>
-      <button class="btn-primary" id="report-send">Send code</button>
+             placeholder="<?= e(t('report_email_placeholder')) ?>">
+      <p class="muted"><?= e(t('report_email_note')) ?></p>
+      <button class="btn-primary" id="report-send"><?= e(t('report_send_code')) ?></button>
     </div>
     <div data-step="2" hidden>
       <input class="input" id="report-code" inputmode="numeric" maxlength="6"
-             placeholder="6-digit code">
-      <button class="btn-primary" id="report-confirm">Confirm report</button>
+             placeholder="<?= e(t('report_code_placeholder')) ?>">
+      <button class="btn-primary" id="report-confirm"><?= e(t('report_confirm')) ?></button>
     </div>
     <p class="form-error" id="report-error" hidden></p>
-    <p class="form-notice" id="report-done" hidden>Report filed. Thank you.</p>
-    <button class="link-btn" id="report-close">Close</button>
+    <p class="form-notice" id="report-done" hidden><?= e(t('report_done')) ?></p>
+    <button class="link-btn" id="report-close"><?= e(t('close')) ?></button>
   </div>
 </div>

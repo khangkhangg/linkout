@@ -2,6 +2,11 @@
 require __DIR__ . '/../src/bootstrap.php';
 
 route('GET', '/health', fn() => json_out(['ok' => true]));
+route('GET', '/lang/{code}', function ($p) {
+    setcookie('lang', in_array($p['code'], ['en', 'vi'], true) ? $p['code'] : 'en',
+        time() + 86400 * 365, '/');
+    redirect($_SERVER['HTTP_REFERER'] ?? '/');
+});
 route('GET', '/api/companies', fn() => json_out(['ok' => true,
     'companies' => company_search(db(), $_GET['q'] ?? '')]));
 route('POST', '/api/vote', function () {
