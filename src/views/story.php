@@ -44,6 +44,7 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
   <?php endif; ?>
 </article>
 
+<?php if ($story['status'] === 'active'): ?>
 <section id="comments" class="comments">
   <h2 class="h-subheading"><?= count($comments) ?> comments</h2>
   <?php foreach ($comments as $c): ?>
@@ -68,3 +69,4 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
   <p class="muted"><a class="link" href="/login">Log in</a> to comment.</p>
   <?php endif; ?>
 </section>
+<?php endif; ?>
