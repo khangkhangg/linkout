@@ -24,7 +24,11 @@ const FREEMAIL_DOMAINS = [
 
 function is_freemail(string $domain): bool
 {
-    return in_array(strtolower($domain), FREEMAIL_DOMAINS, true);
+    $domain = strtolower($domain);
+    foreach (FREEMAIL_DOMAINS as $blocked) {
+        if ($domain === $blocked || str_ends_with($domain, '.' . $blocked)) return true;
+    }
+    return false;
 }
 
 const HANDLE_ADJ = ['Quiet','Brave','Sly','Calm','Swift','Bold','Wry','Keen',

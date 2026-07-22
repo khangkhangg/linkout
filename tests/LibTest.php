@@ -28,6 +28,9 @@ final class LibTest extends TestCase
         $this->assertFalse(is_freemail('fpt.com.vn'));
         $this->assertFalse(is_freemail('anthropic.com'));
         $this->assertTrue(is_freemail('GMAIL.COM'), 'case-insensitive');
+        $this->assertTrue(is_freemail('mail.gmail.com'), 'subdomain of blocked provider');
+        $this->assertTrue(is_freemail('anything.yahoo.com'), 'subdomain of blocked provider');
+        $this->assertFalse(is_freemail('notgmail.com'), 'suffix must match on label boundary');
     }
 
     public function test_generate_handle_shape_and_variety(): void
