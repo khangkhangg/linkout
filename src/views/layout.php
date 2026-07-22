@@ -1,12 +1,40 @@
-<!doctype html>
-<html lang="en">
+<?php
+$pageTitle = ($title ?? 'LinkOut') === 'LinkOut'
+    ? 'LinkOut — Anonymous exit stories & company reviews'
+    : ($title ?? 'LinkOut') . ' · LinkOut';
+$metaDesc = $meta_description ?? 'Real, anonymous exit stories from people who left their jobs. Read and rate companies on leadership, culture, pay, work-life balance, growth and how they handle departures.';
+$canonical = 'https://linkout.didudi.com' . strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+$ogType = $og_type ?? 'website';
+$path = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+$noindex = ($noindex ?? false)
+    || (bool) preg_match('#^/(admin|post|login|signup|reset|confirm|lang|api|search|story/\d+/edit)#', $path);
+?><!doctype html>
+<html lang="<?= e(current_lang()) ?>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= e($title ?? 'LinkOut') ?></title>
+  <title><?= e($pageTitle) ?></title>
+  <meta name="description" content="<?= e($metaDesc) ?>">
+  <link rel="canonical" href="<?= e($canonical) ?>">
+  <?php if ($noindex): ?><meta name="robots" content="noindex, nofollow"><?php endif; ?>
+  <meta property="og:site_name" content="LinkOut">
+  <meta property="og:type" content="<?= e($ogType) ?>">
+  <meta property="og:title" content="<?= e($pageTitle) ?>">
+  <meta property="og:description" content="<?= e($metaDesc) ?>">
+  <meta property="og:url" content="<?= e($canonical) ?>">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<?= e($pageTitle) ?>">
+  <meta name="twitter:description" content="<?= e($metaDesc) ?>">
+  <?php if (!empty($json_ld)): ?>
+  <script type="application/ld+json"><?= json_encode($json_ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+  <?php endif; ?>
   <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>
+  <?php $announcement = setting_get(db(), 'announcement', ''); ?>
+  <?php if ($announcement !== ''): ?>
+  <div class="site-announce"><?= e($announcement) ?></div>
+  <?php endif; ?>
   <nav class="nav">
     <a class="nav-logo" href="/">
       <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" fill="none"

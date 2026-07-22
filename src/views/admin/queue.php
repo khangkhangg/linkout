@@ -1,3 +1,4 @@
+<?php include __DIR__ . '/_nav.php'; ?>
 <h1 class="h-heading">Report queue</h1>
 <?php if (!$queue): ?><p class="muted">Queue is empty.</p><?php endif; ?>
 <?php foreach ($queue as $r): ?>
@@ -6,10 +7,10 @@
     <?php if ((int)$r['is_company_match']): ?><span class="match-badge">FROM COMPANY</span><?php endif; ?>
     <strong><?= e($r['reason']) ?></strong> on
     <a class="link" href="/story/<?= (int)$r['story_id'] ?>"><?= e($r['story_title']) ?></a>
-    <span class="muted">(story: <?= e($r['story_status']) ?>)</span>
+    <span class="status-tag status-<?= e($r['story_status']) ?>"><?= e($r['story_status']) ?></span>
   </p>
   <?php if ($r['reason_text']): ?><p><?= e($r['reason_text']) ?></p><?php endif; ?>
-  <p class="muted">reporter <?= e($r['reporter_handle']) ?> · <?= e($r['corp_email']) ?>
+  <p class="muted">reporter <?= e($r['reporter_handle']) ?> · <?= e($r['corp_email'] ?: '(email purged)') ?>
      · <?= e($r['created_at']) ?></p>
   <form method="post" action="/admin/action" class="inline-form">
     <input type="hidden" name="story_id" value="<?= (int)$r['story_id'] ?>">
@@ -20,4 +21,3 @@
   </form>
 </div>
 <?php endforeach; ?>
-<p><a class="link" href="/admin/users">Users</a> · <a class="link" href="/admin/companies">Companies</a></p>

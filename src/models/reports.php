@@ -18,7 +18,7 @@ function start_report(PDO $pdo, int $userId, int $storyId, string $reason,
         return ['ok' => false, 'error' => 'invalid_email'];
     }
     $domain = substr(strrchr($corpEmail, '@'), 1);
-    if (is_freemail($domain)) return ['ok' => false, 'error' => 'freemail'];
+    if (is_freemail($domain) || domain_blocked($pdo, $domain)) return ['ok' => false, 'error' => 'freemail'];
 
     $st = $pdo->prepare("SELECT id FROM stories WHERE id = ? AND status <> 'removed'");
     $st->execute([$storyId]);

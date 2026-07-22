@@ -11,6 +11,7 @@ require __DIR__ . '/../src/models/stories.php';
 require __DIR__ . '/../src/models/votes.php';
 require __DIR__ . '/../src/models/comments.php';
 require __DIR__ . '/../src/models/reports.php';
+require __DIR__ . '/../src/models/admin.php';
 
 function test_db(): PDO
 {
@@ -25,7 +26,9 @@ function test_db(): PDO
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
         foreach ($tables as $t) $pdo->exec("DROP TABLE `$t`");
         $pdo->exec('SET FOREIGN_KEY_CHECKS=1');
-        $pdo->exec(file_get_contents(__DIR__ . '/../migrations/001_init.sql'));
+        foreach (glob(__DIR__ . '/../migrations/*.sql') as $f) {
+            $pdo->exec(file_get_contents($f));
+        }
     }
     return $pdo;
 }
