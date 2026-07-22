@@ -5,7 +5,9 @@ route('GET', '/health', fn() => json_out(['ok' => true]));
 route('GET', '/lang/{code}', function ($p) {
     setcookie('lang', in_array($p['code'], ['en', 'vi'], true) ? $p['code'] : 'en',
         time() + 86400 * 365, '/');
-    redirect($_SERVER['HTTP_REFERER'] ?? '/');
+    $ref = parse_url($_SERVER['HTTP_REFERER'] ?? '/', PHP_URL_PATH) ?: '/';
+    if (!str_starts_with($ref, '/') || str_starts_with($ref, '//')) $ref = '/';
+    redirect($ref);
 });
 route('GET', '/api/companies', fn() => json_out(['ok' => true,
     'companies' => company_search(db(), $_GET['q'] ?? '')]));

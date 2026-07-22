@@ -54,7 +54,7 @@ $labels = array_combine(RATING_KEYS, array_map('t', RATING_KEYS)); ?>
     <?php if ($u && (int)$c['user_id'] === (int)$u['id']
               && strtotime($c['created_at']) > time() - 86400): ?>
       <form method="post" action="/comment/<?= (int)$c['id'] ?>/delete" class="inline-form">
-        <button class="link-btn" type="submit">Delete</button>
+        <button class="link-btn" type="submit"><?= e(t('delete')) ?></button>
       </form>
     <?php endif; ?>
   </div>

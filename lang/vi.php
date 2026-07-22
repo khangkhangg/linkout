@@ -14,6 +14,7 @@ return [
     'search_title' => 'Tìm kiếm:', 'search_companies' => 'Công ty', 'search_stories' => 'Câu chuyện',
     'search_no_stories' => 'Không có câu chuyện phù hợp.',
     'company_no_stories' => 'Chưa có câu chuyện nào về công ty này.',
+    'stories_label' => 'câu chuyện', 'recommend_pct_label' => '% giới thiệu', 'points_label' => 'điểm',
     'back_to_signup' => 'Quay lại đăng ký',
     'r_leadership' => 'Lãnh đạo', 'r_culture' => 'Văn hóa làm việc',
     'r_benefits' => 'Lương & phúc lợi', 'r_balance' => 'Cân bằng công việc – cuộc sống',

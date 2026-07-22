@@ -18,6 +18,7 @@ return [
     'search_no_stories' => 'No matching stories.',
     // company page
     'company_no_stories' => 'No stories yet about this company.',
+    'stories_label' => 'stories', 'recommend_pct_label' => '% recommend', 'points_label' => 'points',
     // auth pages
     'back_to_signup' => 'Back to signup',
     // ratings

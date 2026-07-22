@@ -10,8 +10,8 @@
 <?php else: ?>
 <section class="card agg-card">
   <div class="agg-top">
-    <span class="agg-count"><?= (int)$agg['story_count'] ?> stories</span>
-    <span class="agg-rec"><?= number_format((float)$agg['recommend_pct'], 0) ?>% recommend</span>
+    <span class="agg-count"><?= (int)$agg['story_count'] ?> <?= e(t('stories_label')) ?></span>
+    <span class="agg-rec"><?= number_format((float)$agg['recommend_pct'], 0) ?><?= e(t('recommend_pct_label')) ?></span>
   </div>
   <?php foreach ($dims as $key => $label): $v = (float)$agg[$key]; ?>
   <div class="agg-row">
@@ -34,7 +34,7 @@
       <h2 class="story-title"><a href="/story/<?= (int)$s['id'] ?>"><?= e($s['title']) ?></a></h2>
       <p class="story-excerpt"><?= e(mb_substr($s['body'], 0, 220)) ?></p>
       <p class="muted"><?= e($s['handle']) ?> · <?= e(time_ago($s['created_at'])) ?> ·
-        <?= (int)$s['vote_score'] ?> points · <?= (int)$s['comment_count'] ?> <?= e(t('comments')) ?></p>
+        <?= (int)$s['vote_score'] ?> <?= e(t('points_label')) ?> · <?= (int)$s['comment_count'] ?> <?= e(t('comments')) ?></p>
     </div>
   </article>
   <?php endforeach; ?>
