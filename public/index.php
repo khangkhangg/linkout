@@ -11,6 +11,24 @@ route('POST', '/api/vote', function () {
     if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
     return json_out($r);
 });
+route('POST', '/api/report/start', function () {
+    $u = require_verified_user_json();
+    $in = json_decode(file_get_contents('php://input'), true) ?? [];
+    $r = start_report(db(), $u['id'], (int)($in['story_id'] ?? 0),
+        $in['reason'] ?? '', trim($in['reason_text'] ?? '') ?: null, $in['corp_email'] ?? '');
+    if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
+    send_mail($in['corp_email'], t('mail_report_code_subject'),
+        t('mail_report_code_body') . ' ' . $r['code']);
+    return json_out(['ok' => true, 'report_id' => $r['report_id']]);
+});
+route('POST', '/api/report/verify', function () {
+    $u = require_verified_user_json();
+    $in = json_decode(file_get_contents('php://input'), true) ?? [];
+    $r = verify_report(db(), (int)($in['report_id'] ?? 0), $u['id'],
+        (string)($in['code'] ?? ''));
+    if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
+    return json_out($r);
+});
 route('GET', '/', function () {
     $tab = in_array($_GET['tab'] ?? 'new', ['new', 'trending', 'top'], true)
         ? ($_GET['tab'] ?? 'new') : 'new';

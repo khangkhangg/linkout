@@ -39,7 +39,9 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
         <button class="link-btn" type="submit">Delete</button>
       </form>
     <?php endif; ?>
-    <!-- Report button added in Task 11 -->
+    <?php if ($u && $u['email_verified_at'] && (int)$story['user_id'] !== (int)$u['id']): ?>
+      <button class="link-btn" id="report-open" data-story="<?= (int)$story['id'] ?>">Report</button>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
 </article>
@@ -70,3 +72,32 @@ $labels = ['r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
   <?php endif; ?>
 </section>
 <?php endif; ?>
+
+<div class="modal-backdrop" id="report-modal" hidden>
+  <div class="modal glass-card">
+    <h3 class="h-subheading">Report this story</h3>
+    <div data-step="1">
+      <select class="input" id="report-reason">
+        <option value="false_info">False information</option>
+        <option value="doxxing">Doxxing / names a private individual</option>
+        <option value="harassment">Hate or harassment</option>
+        <option value="spam">Spam</option>
+        <option value="other">Other</option>
+      </select>
+      <textarea class="input" id="report-text" rows="2" placeholder="Details (optional)"></textarea>
+      <input class="input" id="report-email" type="email"
+             placeholder="Your corporate email (no gmail/yahoo)">
+      <p class="muted">We send a 6-digit code to prove the mailbox is real.
+         The email is stored for moderation only and never shown publicly.</p>
+      <button class="btn-primary" id="report-send">Send code</button>
+    </div>
+    <div data-step="2" hidden>
+      <input class="input" id="report-code" inputmode="numeric" maxlength="6"
+             placeholder="6-digit code">
+      <button class="btn-primary" id="report-confirm">Confirm report</button>
+    </div>
+    <p class="form-error" id="report-error" hidden></p>
+    <p class="form-notice" id="report-done" hidden>Report filed. Thank you.</p>
+    <button class="link-btn" id="report-close">Close</button>
+  </div>
+</div>

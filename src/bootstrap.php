@@ -8,6 +8,7 @@ require __DIR__ . '/models/companies.php';
 require __DIR__ . '/models/stories.php';
 require __DIR__ . '/models/votes.php';
 require __DIR__ . '/models/comments.php';
+require __DIR__ . '/models/reports.php';
 
 function config(string $key)
 {
