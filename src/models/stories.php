@@ -82,3 +82,50 @@ function story_delete(PDO $pdo, int $storyId): void
         throw $t;
     }
 }
+
+function feed_stories(PDO $pdo, string $tab, int $page, int $perPage = 20, ?int $viewerId = null): array
+{
+    $offset = max(0, $page - 1) * $perPage;
+    $order = match ($tab) {
+        'trending' => 'hot DESC',
+        'top'      => 's.vote_score DESC, s.created_at DESC',
+        default    => 's.created_at DESC',
+    };
+    $where = match ($tab) {
+        'trending' => "s.status = 'active' AND s.created_at > NOW() - INTERVAL 14 DAY",
+        'top'      => "s.status = 'active' AND s.created_at > NOW() - INTERVAL 30 DAY",
+        default    => "s.status = 'active'",
+    };
+    $st = $pdo->prepare("SELECT s.*, c.domain, c.name AS company_name, u.handle,
+            (SELECT COUNT(*) FROM comments cm
+             WHERE cm.story_id = s.id AND cm.status = 'active') AS comment_count,
+            COALESCE(v.value, 0) AS my_vote,
+            s.vote_score / POW(TIMESTAMPDIFF(HOUR, s.created_at, NOW()) + 2, 1.5) AS hot
+        FROM stories s
+        JOIN companies c ON c.id = s.company_id
+        JOIN users u ON u.id = s.user_id
+        LEFT JOIN votes v ON v.story_id = s.id AND v.user_id = :viewer
+        WHERE $where
+        ORDER BY $order
+        LIMIT $perPage OFFSET $offset");
+    $st->execute(['viewer' => $viewerId ?? 0]);
+    return $st->fetchAll();
+}
+
+function rail_trending(PDO $pdo, int $n = 5): array
+{
+    return $pdo->query("SELECT s.id, s.title, s.vote_score
+        FROM stories s
+        WHERE s.status = 'active' AND s.created_at > NOW() - INTERVAL 14 DAY
+        ORDER BY s.vote_score / POW(TIMESTAMPDIFF(HOUR, s.created_at, NOW()) + 2, 1.5) DESC
+        LIMIT $n")->fetchAll();
+}
+
+function rail_most_liked(PDO $pdo, int $n = 5): array
+{
+    return $pdo->query("SELECT s.id, s.title, s.vote_score
+        FROM stories s
+        WHERE s.status = 'active' AND s.created_at > NOW() - INTERVAL 30 DAY
+        ORDER BY s.vote_score DESC, s.created_at DESC
+        LIMIT $n")->fetchAll();
+}

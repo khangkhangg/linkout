@@ -60,3 +60,25 @@ function company_aggregates(PDO $pdo, int $companyId): ?array
     foreach ($a as $k => $v) if ($k !== 'story_count' && $v !== null) $a[$k] = (float)$v;
     return $a;
 }
+
+function rail_top_companies(PDO $pdo, int $n = 5): array
+{
+    // Bayesian smoothing: (sum + global_avg * 10) / (count + 10), where each
+    // story contributes the mean of its six dimension ratings. Min 3 stories.
+    return $pdo->query("
+        WITH story_means AS (
+            SELECT company_id,
+                   (r_leadership + r_culture + r_benefits + r_balance + r_growth + r_exit) / 6.0
+                       AS mean_rating
+            FROM stories WHERE status = 'active'
+        ), g AS (SELECT AVG(mean_rating) AS global_avg FROM story_means)
+        SELECT c.domain, c.name, COUNT(*) AS story_count,
+               (SUM(sm.mean_rating) + g.global_avg * 10) / (COUNT(*) + 10) AS bayes_score
+        FROM story_means sm
+        JOIN companies c ON c.id = sm.company_id
+        CROSS JOIN g
+        GROUP BY c.id, c.domain, c.name, g.global_avg
+        HAVING COUNT(*) >= 3
+        ORDER BY bayes_score DESC
+        LIMIT $n")->fetchAll();
+}

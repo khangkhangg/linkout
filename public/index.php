@@ -11,8 +11,18 @@ route('POST', '/api/vote', function () {
     if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
     return json_out($r);
 });
-route('GET', '/', fn() => view('feed', ['title' => 'LinkOut', 'stories' => [],
-    'tab' => 'new', 'rails' => ['trending' => [], 'liked' => [], 'rated' => []], 'page' => 1]));
+route('GET', '/', function () {
+    $tab = in_array($_GET['tab'] ?? 'new', ['new', 'trending', 'top'], true)
+        ? ($_GET['tab'] ?? 'new') : 'new';
+    $page = max(1, (int)($_GET['page'] ?? 1));
+    $viewer = current_user();
+    return view('feed', [
+        'title' => 'LinkOut', 'tab' => $tab, 'page' => $page,
+        'stories' => feed_stories(db(), $tab, $page, 20, $viewer['id'] ?? null),
+        'rails' => ['trending' => rail_trending(db()), 'liked' => rail_most_liked(db()),
+                    'rated' => rail_top_companies(db())],
+    ]);
+});
 
 route('GET', '/signup', fn() => view('auth/signup', ['title' => 'Sign up']));
 route('POST', '/signup', function () {

@@ -43,3 +43,13 @@ function random_code(): string
 {
     return str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 }
+
+function time_ago(string $datetime): string
+{
+    $d = time() - strtotime($datetime);
+    if ($d < 60) return 'just now';
+    if ($d < 3600) return floor($d / 60) . 'm ago';
+    if ($d < 86400) return floor($d / 3600) . 'h ago';
+    if ($d < 2592000) return floor($d / 86400) . 'd ago';
+    return date('M Y', strtotime($datetime));
+}

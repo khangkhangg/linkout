@@ -42,4 +42,9 @@ final class LibTest extends TestCase
     {
         $this->assertMatchesRegularExpression('/^\d{6}$/', random_code());
     }
+
+    public function test_time_ago(): void
+    {
+        $this->assertSame('just now', time_ago(date('Y-m-d H:i:s')));
+    }
 }
