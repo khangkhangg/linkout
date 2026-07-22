@@ -26,7 +26,10 @@ if (nameInput) {
       const q = nameInput.value.trim();
       box.innerHTML = '';
       if (q.length < 2) return;
-      const { companies } = await (await fetch('/api/companies?q=' + encodeURIComponent(q))).json();
+      const res = await fetch('/api/companies?q=' + encodeURIComponent(q));
+      if (!res.ok) return;
+      const { companies } = await res.json();
+      if (!Array.isArray(companies)) return;
       for (const c of companies) {
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'suggest-item';
@@ -58,6 +61,7 @@ if (modal) {
         corp_email: document.getElementById('report-email').value,
       }),
     });
+    if (res.status === 401) { location.href = '/login'; return; }
     const data = await res.json();
     if (!data.ok) { err.textContent = data.error; show(err, true); return; }
     reportId = data.report_id;
@@ -71,6 +75,7 @@ if (modal) {
       body: JSON.stringify({ report_id: reportId,
         code: document.getElementById('report-code').value.trim() }),
     });
+    if (res.status === 401) { location.href = '/login'; return; }
     const data = await res.json();
     if (!data.ok) { err.textContent = data.error; show(err, true); return; }
     show(modal.querySelector('[data-step="2"]'), false);
