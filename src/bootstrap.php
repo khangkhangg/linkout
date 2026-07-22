@@ -31,11 +31,23 @@ function db(): PDO
 
 function e(?string $s): string { return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8'); }
 
-function redirect(string $path): never { header('Location: ' . $path); exit; }
+class RedirectException extends Exception {}
+class JsonOutException extends Exception {}
+
+function redirect(string $path): never
+{
+    if (!empty($GLOBALS['__smoke'])) throw new RedirectException($path);
+    header('Location: ' . $path);
+    exit;
+}
 
 function json_out(array $data, int $status = 200): never
 {
     http_response_code($status);
+    // json_out() also exits like redirect() — guard it the same way so the
+    // smoke harness (which dispatches routes in-process) doesn't get killed
+    // by a real exit() on the very first request (e.g. GET /health).
+    if (!empty($GLOBALS['__smoke'])) throw new JsonOutException();
     header('Content-Type: application/json');
     echo json_encode($data);
     exit;

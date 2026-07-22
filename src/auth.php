@@ -70,7 +70,12 @@ function require_verified_user_json(): array
 function require_admin(): array
 {
     $u = current_user();
-    if (!$u || $u['role'] !== 'admin') { http_response_code(404); echo '404'; exit; }
+    if (!$u || $u['role'] !== 'admin') {
+        http_response_code(404);
+        echo '404';
+        if (!empty($GLOBALS['__smoke'])) throw new RedirectException('/');
+        exit;
+    }
     return $u;
 }
 
