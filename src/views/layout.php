@@ -8,7 +8,17 @@
 </head>
 <body>
   <nav class="nav">
-    <a class="nav-logo" href="/">LinkOut</a>
+    <a class="nav-logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" fill="none"
+           xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="17" height="25" rx="5.5" fill="#fdedea"/>
+        <path d="M8 2.5h6.5a5.5 5.5 0 0 1 5.5 5.5v14a5.5 5.5 0 0 1-5.5 5.5H8"
+              stroke="#f73b20" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M12.5 15h14.5m0 0-4.6-4.6M27 15l-4.6 4.6"
+              stroke="#f73b20" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">Link<span class="logo-text-accent">Out</span></span>
+    </a>
     <form class="nav-search" action="/search" method="get">
       <input type="search" name="q" placeholder="<?= e(t('nav_search_placeholder')) ?>" value="<?= e($_GET['q'] ?? '') ?>">
     </form>
