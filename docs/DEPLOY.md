@@ -21,11 +21,19 @@ A record: linkout.didudi.com -> <Hetzner IPv4>  (same IP as didudi.com)
     ];
 
 ## 3. nginx vhost /etc/nginx/sites-available/linkout.didudi.com
+    limit_req_zone $binary_remote_addr zone=authpaths:10m rate=6r/m;
     server {
         listen 80;
         server_name linkout.didudi.com;
         root /var/www/linkout/public;
         index index.php;
+        add_header X-Frame-Options DENY always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        location ~ ^/(login|signup|reset)$ {
+            limit_req zone=authpaths burst=6 nodelay;
+            try_files $uri /index.php$is_args$args;
+        }
         location / { try_files $uri /index.php$is_args$args; }
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;

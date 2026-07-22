@@ -83,6 +83,7 @@ return [
     'err_bad_code' => 'Wrong code.', 'err_code_expired' => 'Code expired — start over.',
     'err_too_many_attempts' => 'Too many attempts — start over.',
     'err_reset_invalid' => 'Reset link is invalid or expired.',
+    'err_mail_failed' => 'We could not send the email — please try again.',
     // mail
     'mail_confirm_subject' => 'Confirm your LinkOut account',
     'mail_confirm_body' => 'Welcome to LinkOut. Confirm your email:',

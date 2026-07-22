@@ -22,8 +22,10 @@ route('POST', '/api/report/start', function () {
     $r = start_report(db(), $u['id'], (int)($in['story_id'] ?? 0),
         $in['reason'] ?? '', trim($in['reason_text'] ?? '') ?: null, $in['corp_email'] ?? '');
     if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
-    send_mail($in['corp_email'], t('mail_report_code_subject'),
-        t('mail_report_code_body') . ' ' . $r['code']);
+    if (!send_mail($in['corp_email'], t('mail_report_code_subject'),
+            t('mail_report_code_body') . ' ' . $r['code'])) {
+        return json_out(['ok' => false, 'error' => t('err_mail_failed')], 502);
+    }
     return json_out(['ok' => true, 'report_id' => $r['report_id']]);
 });
 route('POST', '/api/report/verify', function () {
@@ -51,8 +53,9 @@ route('GET', '/signup', fn() => view('auth/signup', ['title' => 'Sign up']));
 route('POST', '/signup', function () {
     $r = signup(db(), $_POST['email'] ?? '', $_POST['password'] ?? '');
     if (!$r['ok']) return view('auth/signup', ['title' => 'Sign up', 'error' => t('err_' . $r['error'])]);
-    send_mail(strtolower(trim($_POST['email'])), t('mail_confirm_subject'),
+    $sent = send_mail(strtolower(trim($_POST['email'])), t('mail_confirm_subject'),
         t('mail_confirm_body') . "\n\n" . config('base_url') . '/confirm/' . $r['confirm_token']);
+    if (!$sent) return view('auth/signup', ['title' => 'Sign up', 'error' => t('err_mail_failed')]);
     return view('auth/login', ['title' => 'Log in', 'notice' => t('notice_check_email')]);
 });
 route('GET', '/confirm/{token}', fn($p) =>
@@ -65,14 +68,18 @@ route('POST', '/login', function () {
     $_SESSION['uid'] = $u['id'];
     redirect('/');
 });
-route('GET', '/logout', function () { session_destroy(); redirect('/'); });
+route('POST', '/logout', function () { session_destroy(); redirect('/'); });
 
 route('GET', '/reset', fn() => view('auth/reset_request', ['title' => 'Reset password']));
 route('POST', '/reset', function () {
     $token = reset_start(db(), $_POST['email'] ?? '');
     if ($token) {
-        send_mail(strtolower(trim($_POST['email'])), t('mail_reset_subject'),
+        $sent = send_mail(strtolower(trim($_POST['email'])), t('mail_reset_subject'),
             t('mail_reset_body') . "\n\n" . config('base_url') . '/reset/' . $token);
+        if (!$sent) {
+            return view('auth/reset_request', ['title' => 'Reset password',
+                'error' => t('err_mail_failed')]);
+        }
     }
     return view('auth/reset_request', ['title' => 'Reset password',
         'notice' => t('notice_reset_sent')]);   // same notice either way — no account probing
@@ -139,8 +146,10 @@ route('GET', '/story/{id}', function ($p) {
 });
 route('POST', '/story/{id}/comment', function ($p) {
     $u = require_verified_user();
-    comment_add(db(), $u['id'], (int)$p['id'], $_POST['body'] ?? '');
-    redirect('/story/' . (int)$p['id'] . '#comments');
+    $id = (int)$p['id'];
+    $r = comment_add(db(), $u['id'], $id, $_POST['body'] ?? '');
+    if (!$r['ok']) redirect('/story/' . $id . '?cerr=' . urlencode($r['error']) . '#comments');
+    redirect('/story/' . $id . '#comments');
 });
 route('POST', '/comment/{id}/delete', function ($p) {
     $u = require_verified_user();

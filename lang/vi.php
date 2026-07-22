@@ -71,6 +71,7 @@ return [
     'err_bad_code' => 'Sai mã.', 'err_code_expired' => 'Mã hết hạn — bắt đầu lại.',
     'err_too_many_attempts' => 'Quá nhiều lần thử — bắt đầu lại.',
     'err_reset_invalid' => 'Liên kết đặt lại không hợp lệ hoặc đã hết hạn.',
+    'err_mail_failed' => 'Không gửi được email — vui lòng thử lại.',
     'mail_confirm_subject' => 'Xác nhận tài khoản LinkOut',
     'mail_confirm_body' => 'Chào mừng đến LinkOut. Xác nhận email của bạn:',
     'mail_reset_subject' => 'Đặt lại mật khẩu LinkOut',

@@ -19,7 +19,9 @@
         <a class="btn-primary" href="/post"><?= e(t('nav_share')) ?></a>
         <span class="nav-handle"><?= e($u['handle']) ?></span>
         <?php if ($u['role'] === 'admin'): ?><a class="link" href="/admin"><?= e(t('nav_admin')) ?></a><?php endif; ?>
-        <a class="link" href="/logout"><?= e(t('nav_logout')) ?></a>
+        <form method="post" action="/logout" class="inline-form">
+          <button class="link-btn" type="submit"><?= e(t('nav_logout')) ?></button>
+        </form>
       <?php else: ?>
         <a class="link" href="/login"><?= e(t('nav_login')) ?></a>
         <a class="btn-primary" href="/signup"><?= e(t('nav_join')) ?></a>

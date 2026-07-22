@@ -59,6 +59,7 @@ $labels = array_combine(RATING_KEYS, array_map('t', RATING_KEYS)); ?>
     <?php endif; ?>
   </div>
   <?php endforeach; ?>
+  <?php if (!empty($_GET['cerr'])): ?><p class="form-error"><?= e(t('err_' . preg_replace('/[^a-z_]/', '', $_GET['cerr']))) ?></p><?php endif; ?>
   <?php if ($u && $u['email_verified_at'] && $story['status'] === 'active'): ?>
   <form method="post" action="/story/<?= (int)$story['id'] ?>/comment" class="comment-form">
     <textarea class="input" name="body" rows="3" maxlength="2000" required
