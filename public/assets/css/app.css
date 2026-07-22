@@ -208,6 +208,7 @@ a { color: var(--color-signal-orange); text-decoration: none; border-radius: var
 /* modal — frosted glass */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(54,8,2,.35);
   display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal-backdrop[hidden] { display: none; }
 .modal { background: rgba(255,255,255,.92); backdrop-filter: blur(30px);
   border-radius: var(--radius-cards); padding: var(--spacing-24); width: min(440px, 92vw);
   box-shadow: var(--shadow-lg); }
