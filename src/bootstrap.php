@@ -4,6 +4,7 @@ require __DIR__ . '/lib.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/mailer.php';
 require __DIR__ . '/ratelimit.php';
+require __DIR__ . '/models/companies.php';
 
 function config(string $key)
 {

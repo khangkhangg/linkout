@@ -2,6 +2,8 @@
 require __DIR__ . '/../src/bootstrap.php';
 
 route('GET', '/health', fn() => json_out(['ok' => true]));
+route('GET', '/api/companies', fn() => json_out(['ok' => true,
+    'companies' => company_search(db(), $_GET['q'] ?? '')]));
 route('GET', '/', fn() => view('feed', ['title' => 'LinkOut', 'stories' => [],
     'tab' => 'new', 'rails' => ['trending' => [], 'liked' => [], 'rated' => []], 'page' => 1]));
 

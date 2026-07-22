@@ -4,6 +4,7 @@ require __DIR__ . '/../src/router.php';
 require __DIR__ . '/../src/lib.php';
 require __DIR__ . '/../src/auth.php';
 require __DIR__ . '/../src/ratelimit.php';
+require __DIR__ . '/../src/models/companies.php';
 
 function test_db(): PDO
 {
