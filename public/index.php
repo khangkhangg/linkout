@@ -27,6 +27,43 @@ route('POST', '/login', function () {
 });
 route('GET', '/logout', function () { session_destroy(); redirect('/'); });
 
+route('GET', '/post', function () {
+    require_verified_user();
+    return view('post', ['title' => 'Share your story', 'editing' => false, 'story' => null]);
+});
+route('POST', '/post', function () {
+    $u = require_verified_user();
+    $c = company_find_or_create(db(), $_POST['company_name'] ?? '',
+        $_POST['company_domain'] ?? '', $u['id']);
+    if (!$c['ok']) return view('post', ['title' => 'Share your story', 'editing' => false,
+        'story' => null, 'error' => t('err_' . $c['error'])]);
+    $r = story_create(db(), $u['id'], $c['company']['id'], $_POST);
+    if (!$r['ok']) return view('post', ['title' => 'Share your story', 'editing' => false,
+        'story' => null, 'error' => t('err_' . $r['error'])]);
+    redirect('/story/' . $r['story_id']);
+});
+route('GET', '/story/{id}/edit', function ($p) {
+    $u = require_verified_user();
+    $s = story_get(db(), (int)$p['id']);
+    if (!$s || !story_editable_by($s, $u)) redirect('/story/' . (int)$p['id']);
+    return view('post', ['title' => 'Edit story', 'editing' => true, 'story' => $s]);
+});
+route('POST', '/story/{id}/edit', function ($p) {
+    $u = require_verified_user();
+    $s = story_get(db(), (int)$p['id']);
+    if (!$s || !story_editable_by($s, $u)) redirect('/story/' . (int)$p['id']);
+    if ($err = story_validate($_POST)) return view('post', ['title' => 'Edit story',
+        'editing' => true, 'story' => $s, 'error' => t('err_' . $err)]);
+    story_update(db(), $s['id'], $_POST);
+    redirect('/story/' . $s['id']);
+});
+route('POST', '/story/{id}/delete', function ($p) {
+    $u = require_verified_user();
+    $s = story_get(db(), (int)$p['id']);
+    if ($s && story_editable_by($s, $u)) story_delete(db(), $s['id']);
+    redirect('/');
+});
+
 $out = dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 if ($out === null) { http_response_code(404); echo '404'; exit; }
 echo $out;

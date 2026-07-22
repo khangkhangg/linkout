@@ -5,6 +5,7 @@ require __DIR__ . '/auth.php';
 require __DIR__ . '/mailer.php';
 require __DIR__ . '/ratelimit.php';
 require __DIR__ . '/models/companies.php';
+require __DIR__ . '/models/stories.php';
 
 function config(string $key)
 {
@@ -45,6 +46,8 @@ function view(string $template, array $data = []): string
     require __DIR__ . '/views/layout.php';
     return ob_get_clean();
 }
+
+date_default_timezone_set('Asia/Bangkok');
 
 session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax',
     'secure' => config('env') === 'prod']);
