@@ -8,6 +8,7 @@ require __DIR__ . '/../src/ratelimit.php';
 require __DIR__ . '/../src/models/companies.php';
 require __DIR__ . '/../src/models/stories.php';
 require __DIR__ . '/../src/models/votes.php';
+require __DIR__ . '/../src/models/comments.php';
 
 function test_db(): PDO
 {

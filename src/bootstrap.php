@@ -7,6 +7,7 @@ require __DIR__ . '/ratelimit.php';
 require __DIR__ . '/models/companies.php';
 require __DIR__ . '/models/stories.php';
 require __DIR__ . '/models/votes.php';
+require __DIR__ . '/models/comments.php';
 
 function config(string $key)
 {

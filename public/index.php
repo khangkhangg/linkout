@@ -81,6 +81,33 @@ route('POST', '/story/{id}/delete', function ($p) {
     redirect('/');
 });
 
+route('GET', '/story/{id}', function ($p) {
+    $s = story_get(db(), (int)$p['id']);
+    if (!$s || $s['status'] === 'removed') { http_response_code(404); return '404'; }
+    $u = current_user();
+    $mv = 0;
+    if ($u) {
+        $st = db()->prepare('SELECT value FROM votes WHERE user_id = ? AND story_id = ?');
+        $st->execute([$u['id'], $s['id']]);
+        $mv = (int)($st->fetchColumn() ?: 0);
+    }
+    return view('story', ['title' => $s['title'], 'story' => $s, 'my_vote' => $mv,
+        'comments' => $s['status'] === 'active' ? comments_for_story(db(), $s['id']) : []]);
+});
+route('POST', '/story/{id}/comment', function ($p) {
+    $u = require_verified_user();
+    comment_add(db(), $u['id'], (int)$p['id'], $_POST['body'] ?? '');
+    redirect('/story/' . (int)$p['id'] . '#comments');
+});
+route('POST', '/comment/{id}/delete', function ($p) {
+    $u = require_verified_user();
+    $st = db()->prepare('SELECT story_id FROM comments WHERE id = ?');
+    $st->execute([(int)$p['id']]);
+    $sid = (int)($st->fetchColumn() ?: 0);
+    comment_delete(db(), (int)$p['id'], $u['id']);
+    redirect($sid ? "/story/$sid#comments" : '/');
+});
+
 $out = dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 if ($out === null) { http_response_code(404); echo '404'; exit; }
 echo $out;
