@@ -84,7 +84,9 @@ final class AdminV2Test extends TestCase
 
     public function test_purge_resolved_emails_only(): void
     {
-        $this->pdo->exec('DELETE FROM reports');   // shared DB — control our own set
+        // Neutralize any pre-existing rows from other classes in the shared DB by
+        // marking their emails already-empty, so our count reflects only our set.
+        $this->pdo->exec("UPDATE reports SET corp_email = '' WHERE corp_email <> ''");
         $cid = $this->mkCompany('purgeco' . uniqid());
         $sid = $this->mkStory($cid);
         $mk = function (string $status, string $email) use ($sid) {

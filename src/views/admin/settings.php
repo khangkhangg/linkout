@@ -17,7 +17,7 @@
   <h2 class="h-subheading">Site announcement</h2>
   <p class="muted">Shown as a banner to every visitor. Leave empty to hide.</p>
   <form method="post" action="/admin/settings">
-    <textarea class="input" name="announcement" rows="2" maxlength="280"
+    <textarea class="input" name="announcement" rows="2" maxlength="255"
               placeholder="e.g. Scheduled maintenance Sunday 9pm."><?= e($announcement) ?></textarea>
     <button class="btn-primary" name="do" value="announcement" type="submit">Save announcement</button>
   </form>

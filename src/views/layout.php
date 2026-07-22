@@ -26,7 +26,7 @@ $noindex = ($noindex ?? false)
   <meta name="twitter:title" content="<?= e($pageTitle) ?>">
   <meta name="twitter:description" content="<?= e($metaDesc) ?>">
   <?php if (!empty($json_ld)): ?>
-  <script type="application/ld+json"><?= json_encode($json_ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+  <script type="application/ld+json"><?= json_encode($json_ld, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
   <?php endif; ?>
   <link rel="stylesheet" href="/assets/css/app.css">
 </head>

@@ -133,8 +133,10 @@ function blocked_domains_list(PDO $pdo): array
 
 function blocked_domain_add(PDO $pdo, string $domain, int $adminId): ?string
 {
-    $norm = normalize_domain($domain) ?? strtolower(trim($domain));
-    if ($norm === '' || !str_contains($norm, '.')) return null;
+    // Reject anything that isn't a clean domain — a raw fallback could store LIKE
+    // wildcards (e.g. "%.com") that domain_blocked() would then over-match.
+    $norm = normalize_domain($domain);
+    if ($norm === null) return null;
     $pdo->prepare('INSERT IGNORE INTO blocked_domains (domain, added_by) VALUES (?,?)')
         ->execute([$norm, $adminId]);
     return $norm;

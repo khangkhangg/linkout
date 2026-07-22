@@ -282,7 +282,8 @@ route('POST', '/admin/story', function () {
     $status = $_POST['status'] ?? '';
     admin_set_story_status(db(), $sid, $status);
     log_admin_action(db(), $a['id'], 'set_story_' . $status, 'story', $sid);
-    redirect($_SERVER['HTTP_REFERER'] ?? '/admin/stories');
+    $ref = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH) ?: '/admin/stories';
+    redirect(str_starts_with($ref, '/admin') ? $ref : '/admin/stories');
 });
 route('GET', '/admin/comments', function () {
     require_admin();
