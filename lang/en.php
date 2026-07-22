@@ -13,6 +13,13 @@ return [
     'rail_rated' => 'Highly rated companies',
     'recommends' => 'Recommends', 'comments' => 'comments',
     'pager_newer' => '← Newer', 'pager_older' => 'Older →',
+    // search
+    'search_title' => 'Search:', 'search_companies' => 'Companies', 'search_stories' => 'Stories',
+    'search_no_stories' => 'No matching stories.',
+    // company page
+    'company_no_stories' => 'No stories yet about this company.',
+    // auth pages
+    'back_to_signup' => 'Back to signup',
     // ratings
     'r_leadership' => 'Leadership', 'r_culture' => 'Work culture',
     'r_benefits' => 'Comp & benefits', 'r_balance' => 'Work-life balance',

@@ -1,7 +1,7 @@
-<h1 class="h-heading">Search: <?= e($q) ?></h1>
+<h1 class="h-heading"><?= t('search_title') ?> <?= e($q) ?></h1>
 <?php if ($companies): ?>
 <section class="search-companies">
-  <h2 class="h-subheading">Companies</h2>
+  <h2 class="h-subheading"><?= t('search_companies') ?></h2>
   <?php foreach ($companies as $c): ?>
     <a class="company-chip" href="/company/<?= e($c['domain']) ?>"><?= e($c['name']) ?>
       <span class="muted"><?= e($c['domain']) ?></span></a>
@@ -9,8 +9,8 @@
 </section>
 <?php endif; ?>
 <section class="search-stories">
-  <h2 class="h-subheading">Stories</h2>
-  <?php if (!$stories): ?><p class="muted">No matching stories.</p><?php endif; ?>
+  <h2 class="h-subheading"><?= t('search_stories') ?></h2>
+  <?php if (!$stories): ?><p class="muted"><?= t('search_no_stories') ?></p><?php endif; ?>
   <?php foreach ($stories as $s): ?>
   <article class="card story-card">
     <div class="story-body">

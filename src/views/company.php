@@ -6,7 +6,7 @@
   <p class="muted"><?= e($company['domain']) ?></p>
 </header>
 <?php if ($agg['story_count'] === 0): ?>
-  <p class="muted">No stories yet about this company.</p>
+  <p class="muted"><?= t('company_no_stories') ?></p>
 <?php else: ?>
 <section class="card agg-card">
   <div class="agg-top">
