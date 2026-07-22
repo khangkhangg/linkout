@@ -233,7 +233,6 @@ a { color: var(--color-signal-orange); text-decoration: none; border-radius: var
   border-radius: var(--radius-pills); padding: 2px 10px; font-size: var(--text-caption); }
 .pager { display: flex; justify-content: space-between; margin-top: var(--spacing-24); }
 .comments { max-width: 640px; }
-.story-full .story-text { margin: var(--spacing-24) 0; white-space: normal; }
 
 /* user menu (logged-in nav) */
 .avatar { display: inline-flex; align-items: center; justify-content: center;
@@ -276,8 +275,9 @@ a { color: var(--color-signal-orange); text-decoration: none; border-radius: var
   color: var(--color-signal-orange); }
 .story-side .rating-row { padding: 5px 0; }
 .company-more { display: inline-block; margin-top: var(--spacing-8); font-size: var(--text-body-sm); }
-.story-full .story-text { white-space: normal; line-height: 1.7; }
-.story-full .story-text { margin: var(--spacing-24) 0; }
+.story-full .story-head { display: flex; gap: var(--spacing-16); align-items: flex-start; }
+.story-full .story-head > div:last-child { min-width: 0; }
+.story-full .story-text { white-space: normal; line-height: 1.7; margin: var(--spacing-24) 0; }
 
 /* post attestation */
 .attest-row { display: flex; gap: var(--spacing-8); align-items: flex-start;
