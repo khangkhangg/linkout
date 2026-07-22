@@ -4,6 +4,13 @@ require __DIR__ . '/../src/bootstrap.php';
 route('GET', '/health', fn() => json_out(['ok' => true]));
 route('GET', '/api/companies', fn() => json_out(['ok' => true,
     'companies' => company_search(db(), $_GET['q'] ?? '')]));
+route('POST', '/api/vote', function () {
+    $u = require_verified_user_json();
+    $in = json_decode(file_get_contents('php://input'), true) ?? [];
+    $r = cast_vote(db(), $u['id'], (int)($in['story_id'] ?? 0), (int)($in['value'] ?? 0));
+    if (!$r['ok']) return json_out(['ok' => false, 'error' => t('err_' . $r['error'])], 400);
+    return json_out($r);
+});
 route('GET', '/', fn() => view('feed', ['title' => 'LinkOut', 'stories' => [],
     'tab' => 'new', 'rails' => ['trending' => [], 'liked' => [], 'rated' => []], 'page' => 1]));
 

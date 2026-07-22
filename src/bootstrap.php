@@ -6,6 +6,7 @@ require __DIR__ . '/mailer.php';
 require __DIR__ . '/ratelimit.php';
 require __DIR__ . '/models/companies.php';
 require __DIR__ . '/models/stories.php';
+require __DIR__ . '/models/votes.php';
 
 function config(string $key)
 {
