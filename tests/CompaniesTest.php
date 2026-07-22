@@ -50,21 +50,14 @@ final class CompaniesTest extends TestCase
         $this->assertEqualsWithDelta(50.0, $a['recommend_pct'], 0.01);
     }
 
-    public function test_duplicate_domain_race_returns_existing_company(): void
+    public function test_insert_or_get_recovers_when_domain_already_exists(): void
     {
-        // Insert a company row directly via SQL (simulates another concurrent request winning the race)
-        $ins = $this->pdo->prepare('INSERT INTO companies (domain, name, created_by) VALUES (?,?,?)');
-        $ins->execute(['race-test.com', 'First Name', $this->uid]);
-        $existingId = $this->pdo->lastInsertId();
-
-        // Call company_find_or_create with a DIFFERENT name but same domain
-        // This will trigger the INSERT attempt, which will fail with duplicate key,
-        // then the catch block should re-fetch and return the existing company
-        $r = company_find_or_create($this->pdo, 'Different Name', 'race-test.com', $this->uid);
-
-        $this->assertTrue($r['ok']);
-        $this->assertSame((int)$existingId, $r['company']['id'], 'should return existing company id on duplicate domain');
-        $this->assertSame('First Name', $r['company']['name'], 'should keep the original name');
-        $this->assertSame('race-test.com', $r['company']['domain']);
+        $domain = 'racetest' . uniqid() . '.com';
+        $first = company_find_or_create($this->pdo, 'Original Name', $domain, $this->uid)['company'];
+        // Direct call bypasses the pre-check, so the INSERT hits the UNIQUE key
+        // and the 1062 catch path must recover by returning the existing row.
+        $got = company_insert_or_get($this->pdo, $domain, 'Racing Name', $this->uid);
+        $this->assertSame((int)$first['id'], (int)$got['id']);
+        $this->assertSame('Original Name', $got['name']);
     }
 }

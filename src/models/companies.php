@@ -1,5 +1,16 @@
 <?php
 
+function company_insert_or_get(PDO $pdo, string $domain, string $name, int $userId): ?array
+{
+    try {
+        $pdo->prepare('INSERT INTO companies (domain, name, created_by) VALUES (?,?,?)')
+            ->execute([$domain, $name, $userId]);
+    } catch (PDOException $e) {
+        if ((int)($e->errorInfo[1] ?? 0) !== 1062) throw $e;   // 1062 = ER_DUP_ENTRY: lost the race, row exists
+    }
+    return company_by_domain($pdo, $domain);
+}
+
 function company_find_or_create(PDO $pdo, string $name, string $domainInput, int $userId): array
 {
     $domain = normalize_domain($domainInput);
@@ -10,19 +21,7 @@ function company_find_or_create(PDO $pdo, string $name, string $domainInput, int
     $existing = company_by_domain($pdo, $domain);
     if ($existing) return ['ok' => true, 'company' => $existing];
 
-    try {
-        $pdo->prepare('INSERT INTO companies (domain, name, created_by) VALUES (?,?,?)')
-            ->execute([$domain, $name, $userId]);
-    } catch (PDOException $e) {
-        if ($e->errorInfo[1] ?? null) {
-            if ((int)($e->errorInfo[1]) === 1062) {
-                $existing = company_by_domain($pdo, $domain);
-                if ($existing) return ['ok' => true, 'company' => $existing];
-            }
-        }
-        throw $e;
-    }
-    return ['ok' => true, 'company' => company_by_domain($pdo, $domain)];
+    return ['ok' => true, 'company' => company_insert_or_get($pdo, $domain, $name, $userId)];
 }
 
 function company_by_domain(PDO $pdo, string $domain): ?array
