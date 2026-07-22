@@ -21,7 +21,8 @@ final class LibTest extends TestCase
     {
         foreach (['gmail.com','yahoo.com','outlook.com','hotmail.com','icloud.com',
                   'proton.me','protonmail.com','zoho.com','aol.com','mail.com',
-                  'gmx.com','yandex.com','qq.com','163.com'] as $d) {
+                  'gmx.com','yandex.com','qq.com','163.com','ymail.com','rocketmail.com',
+                  'hotmail.co.uk','mail.ru'] as $d) {
             $this->assertTrue(is_freemail($d), $d);
         }
         $this->assertFalse(is_freemail('fpt.com.vn'));

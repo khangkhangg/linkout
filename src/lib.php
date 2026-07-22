@@ -16,7 +16,10 @@ const FREEMAIL_DOMAINS = [
     'hotmail.com','live.com','msn.com','icloud.com','me.com','proton.me',
     'protonmail.com','zoho.com','aol.com','mail.com','gmx.com','gmx.net',
     'yandex.com','yandex.ru','qq.com','163.com','126.com','tutanota.com',
-    'fastmail.com','hey.com','pm.me',
+    'fastmail.com','hey.com','pm.me','ymail.com','rocketmail.com','hotmail.co.uk',
+    'hotmail.fr','hotmail.de','hotmail.it','hotmail.es','live.co.uk','live.fr',
+    'live.de','outlook.com.vn','yahoo.co.uk','yahoo.fr','yahoo.de','yahoo.co.jp',
+    'googlemail.co.uk','icloud.com.cn','mail.ru','zohomail.com','duck.com',
 ];
 
 function is_freemail(string $domain): bool
