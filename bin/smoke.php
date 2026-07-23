@@ -14,9 +14,9 @@ $checks = [
     ['GET', '/login', 200],
     ['GET', '/reset', 200],
     ['GET', '/post', 302],          // not logged in -> redirect
-    ['GET', '/admin', 404],         // not admin -> hidden
-    ['GET', '/admin/stories', 404],
-    ['GET', '/admin/settings', 404],
+    ['GET', '/admin', 302],         // no session -> redirect to login
+    ['GET', '/admin/stories', 302],
+    ['GET', '/admin/settings', 302],
     ['GET', '/robots.txt', 200],
     ['GET', '/sitemap.xml', 200],
     ['GET', '/story/999999', 404],

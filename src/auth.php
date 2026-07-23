@@ -70,7 +70,13 @@ function require_verified_user_json(): array
 function require_admin(): array
 {
     $u = current_user();
-    if (!$u || $u['role'] !== 'admin') {
+    // No session at all (e.g. logged out / timed out): send to login rather than a
+    // bare 404 — the request came from someone who may just need to sign back in.
+    if (!$u) {
+        redirect('/login');
+    }
+    // Logged in but not an admin: keep the panel invisible with a 404.
+    if ($u['role'] !== 'admin') {
         http_response_code(404);
         echo '404';
         if (!empty($GLOBALS['__smoke'])) throw new RedirectException('/');
