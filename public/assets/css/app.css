@@ -342,3 +342,5 @@ a.admin-stat:hover { box-shadow: var(--shadow-lg); }
 .admin-settings-block { margin-bottom: var(--spacing-16); }
 .admin-settings-block .input { margin-bottom: var(--spacing-12); }
 .admin-user-head { display: flex; align-items: center; gap: var(--spacing-16); margin: var(--spacing-16) 0; }
+.admin-field-label { display: block; font-size: var(--text-body-sm); color: var(--color-ash-grey);
+  margin-bottom: var(--spacing-4); letter-spacing: .02em; }

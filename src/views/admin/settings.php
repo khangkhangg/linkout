@@ -24,6 +24,23 @@
 </section>
 
 <section class="card admin-settings-block">
+  <h2 class="h-subheading">Analytics &amp; ads</h2>
+  <p class="muted">Paste your IDs only — we build the official Google snippets and load them
+    in the &lt;head&gt; of public pages. Leave a field empty to disable it.</p>
+  <?php if (!empty($analytics_err)): ?><p class="form-error">Invalid ID format. GA looks like
+    <code>G-XXXXXXX</code>; AdSense looks like <code>ca-pub-1234567890123456</code>.</p><?php endif; ?>
+  <form method="post" action="/admin/settings">
+    <label class="admin-field-label">Google Analytics measurement ID</label>
+    <input class="input" name="ga_measurement_id" value="<?= e($ga_measurement_id) ?>"
+           placeholder="G-XXXXXXX" autocomplete="off">
+    <label class="admin-field-label">Google AdSense publisher ID</label>
+    <input class="input" name="adsense_client" value="<?= e($adsense_client) ?>"
+           placeholder="ca-pub-XXXXXXXXXXXXXXXX" autocomplete="off">
+    <button class="btn-primary" name="do" value="analytics" type="submit">Save analytics &amp; ads</button>
+  </form>
+</section>
+
+<section class="card admin-settings-block">
   <h2 class="h-subheading">Privacy</h2>
   <p class="muted">Erase stored reporter corporate emails from all resolved (dismissed or
     actioned) reports. Pending reports keep their email until resolved.</p>

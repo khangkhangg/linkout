@@ -28,6 +28,20 @@ $noindex = ($noindex ?? false)
   <?php if (!empty($json_ld)): ?>
   <script type="application/ld+json"><?= json_encode($json_ld, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
   <?php endif; ?>
+  <?php // Google Analytics / AdSense — only on public (indexable) pages. IDs are
+  // format-validated on save; still rawurlencode/json_encode here for defense.
+  if (!$noindex):
+    $gaId = setting_get(db(), 'ga_measurement_id', '');
+    $adsClient = setting_get(db(), 'adsense_client', '');
+  ?>
+    <?php if ($gaId !== ''): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= rawurlencode($gaId) ?>"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',<?= json_encode($gaId) ?>);</script>
+    <?php endif; ?>
+    <?php if ($adsClient !== ''): ?>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<?= rawurlencode($adsClient) ?>" crossorigin="anonymous"></script>
+    <?php endif; ?>
+  <?php endif; ?>
   <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>

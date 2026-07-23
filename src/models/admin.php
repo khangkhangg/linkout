@@ -163,6 +163,18 @@ function setting_set(PDO $pdo, string $key, string $value): void
         ON DUPLICATE KEY UPDATE v = VALUES(v)')->execute([$key, $value]);
 }
 
+// Validate analytics/ads IDs to strict charsets so only known-safe tokens ever
+// reach the page markup (we build the official snippets ourselves). '' = clear.
+function valid_ga_id(string $id): bool
+{
+    return $id === '' || (bool) preg_match('/^(G|GT|AW|UA)-[A-Z0-9-]{4,20}$/', $id);
+}
+
+function valid_adsense_client(string $id): bool
+{
+    return $id === '' || (bool) preg_match('/^ca-pub-[0-9]{10,20}$/', $id);
+}
+
 /* ---------- user detail & roles ---------- */
 
 function admin_user_detail(PDO $pdo, int $userId): ?array

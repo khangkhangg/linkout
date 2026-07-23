@@ -18,6 +18,8 @@ final class AdminV2Test extends TestCase
     protected function tearDown(): void
     {
         setting_set($this->pdo, 'report_threshold', '3');
+        setting_set($this->pdo, 'ga_measurement_id', '');
+        setting_set($this->pdo, 'adsense_client', '');
         $this->pdo->exec('DELETE FROM blocked_domains WHERE added_by IS NOT NULL');
     }
 
@@ -113,6 +115,31 @@ final class AdminV2Test extends TestCase
         $this->assertNotEmpty($actions);
         $this->assertSame('remove_story', $actions[0]['action']);
         $this->assertArrayHasKey('admin_handle', $actions[0]);
+    }
+
+    public function test_analytics_id_validation(): void
+    {
+        $this->assertTrue(valid_ga_id('G-ABC1234'));
+        $this->assertTrue(valid_ga_id('UA-12345-6'));
+        $this->assertTrue(valid_ga_id(''), 'empty clears');
+        $this->assertFalse(valid_ga_id('G-<script>'), 'no tags');
+        $this->assertFalse(valid_ga_id('not-an-id'));
+
+        $this->assertTrue(valid_adsense_client('ca-pub-1234567890123456'));
+        $this->assertTrue(valid_adsense_client(''), 'empty clears');
+        $this->assertFalse(valid_adsense_client('ca-pub-abc'), 'digits only');
+        $this->assertFalse(valid_adsense_client('pub-123'));
+        $this->assertFalse(valid_adsense_client('ca-pub-1"><script>'));
+    }
+
+    public function test_analytics_settings_roundtrip(): void
+    {
+        setting_set($this->pdo, 'ga_measurement_id', 'G-TEST123');
+        setting_set($this->pdo, 'adsense_client', 'ca-pub-9999888877776666');
+        $this->assertSame('G-TEST123', setting_get($this->pdo, 'ga_measurement_id'));
+        $this->assertSame('ca-pub-9999888877776666', setting_get($this->pdo, 'adsense_client'));
+        setting_set($this->pdo, 'ga_measurement_id', '');
+        $this->assertSame('', setting_get($this->pdo, 'ga_measurement_id'));
     }
 
     public function test_stats_shape(): void

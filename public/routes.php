@@ -384,6 +384,9 @@ route('GET', '/admin/settings', function () {
     return admin_view('admin/settings', ['title' => 'Settings',
         'report_threshold' => setting_get(db(), 'report_threshold', '3'),
         'announcement' => setting_get(db(), 'announcement', ''),
+        'ga_measurement_id' => setting_get(db(), 'ga_measurement_id', ''),
+        'adsense_client' => setting_get(db(), 'adsense_client', ''),
+        'analytics_err' => ($_GET['err'] ?? '') === 'analytics',
         'saved' => !empty($_GET['saved']), 'purged' => isset($_GET['purged']) ? (int)$_GET['purged'] : null]);
 });
 route('POST', '/admin/settings', function () {
@@ -398,6 +401,17 @@ route('POST', '/admin/settings', function () {
             setting_set(db(), 'announcement', trim($_POST['announcement'] ?? ''));
             log_admin_action(db(), $a['id'], 'set_announcement', 'setting', null,
                 trim($_POST['announcement'] ?? '') === '' ? 'cleared' : 'set');
+            redirect('/admin/settings?saved=1');
+        case 'analytics':
+            $ga = trim($_POST['ga_measurement_id'] ?? '');
+            $ads = trim($_POST['adsense_client'] ?? '');
+            if (!valid_ga_id($ga) || !valid_adsense_client($ads)) {
+                redirect('/admin/settings?err=analytics');
+            }
+            setting_set(db(), 'ga_measurement_id', $ga);
+            setting_set(db(), 'adsense_client', $ads);
+            log_admin_action(db(), $a['id'], 'set_analytics', 'setting', null,
+                trim(($ga !== '' ? 'GA ' : '') . ($ads !== '' ? 'AdSense' : '')) ?: 'cleared');
             redirect('/admin/settings?saved=1');
         case 'purge_emails':
             $n = admin_purge_resolved_emails(db());
